@@ -1,14 +1,19 @@
 import {
   adv1,
+  canAdventure,
   cliExecute,
   familiarEquippedEquipment,
   familiarWeight,
+  getWorkshed,
   itemAmount,
+  myAdventures,
   myBasestat,
   myPrimestat,
+  print,
   retrieveItem,
   retrievePrice,
   runChoice,
+  totalTurnsPlayed,
   use,
   useFamiliar,
   useSkill,
@@ -21,6 +26,7 @@ import {
   $item,
   $items,
   $location,
+  $locations,
   $monster,
   $skill,
   AutumnAton,
@@ -29,12 +35,14 @@ import {
   getSaleValue,
   have,
   Macro,
+  property,
   set,
   uneffect,
 } from "libram";
 import { CombatStrategy } from "../engine/combat";
 import { Quest } from "../engine/task";
 import { OutfitSpec, step } from "grimoire-kolmafia";
+import { farmingNookWithAutumnaton } from "../tasks/level7";
 
 export const MiscQuest: Quest = {
   name: "Misc",
@@ -377,6 +385,107 @@ export const MiscQuest: Quest = {
       limit: { tries: 1 },
       freeaction: true,
     },
+    {
+      name: "Autumnaton",
+      after: [],
+      priority: () => true,
+      ready: () => AutumnAton.have(),
+      completed: () => step("questL13Final") >= 0,
+      do: () => {
+        // Refresh upgrades
+        AutumnAton.upgrade();
+
+        const upgrades = AutumnAton.currentUpgrades();
+        const zones = [];
+
+        if (!upgrades.includes("leftarm1")) {
+          zones.push($location`The Haunted Pantry`);
+        }
+
+        if (!upgrades.includes("leftleg1")) {
+          zones.push(
+            $location`Guano Junction`,
+            $location`The Batrat and Ratbat Burrow`,
+            $location`The Beanbat Chamber`,
+            $location`Noob Cave`
+          );
+        }
+
+        if (!upgrades.includes("rightleg1")) {
+          zones.push(
+            $location`The Haunted Library`,
+            $location`The Neverending Party`,
+            $location`The Haunted Kitchen`
+          );
+        }
+
+        if (!upgrades.includes("rightarm1")) {
+          zones.push(
+            $location`The Smut Orc Logging Camp`,
+            $location`Twin Peak`,
+            $location`The Goatlet`,
+            $location`The Overgrown Lot`
+          );
+        }
+
+        if (
+          AutumnAton.currentUpgrades().length >= 4 &&
+          step("questL12War") >= 1 &&
+          itemAmount($item`barrel of gunpowder`) < 5 &&
+          get("sidequestLighthouseCompleted") === "none"
+        ) {
+          adv1($location`Sonofa Beach`);
+          zones.push($location`Sonofa Beach`);
+        }
+
+        // Farming
+        else if (farmingNookWithAutumnaton()) {
+          zones.push($location`The Defiled Nook`);
+        }
+
+        // Always send it somewhere
+        if (zones.length < 1) {
+          if (
+            !AutumnAton.availableLocations().includes($location`The Toxic Teacups`) &&
+            canAdventure($location`The Toxic Teacups`)
+          ) {
+            adv1($location`The Toxic Teacups`);
+            zones.push($location`The Toxic Teacups`);
+          } else zones.push($location`The Sleazy Back Alley`);
+        }
+
+        const result = AutumnAton.sendTo(zones);
+        if (result) print(`Autumnaton sent to ${result}`);
+      },
+      limit: { tries: 15 },
+      freeaction: true,
+    },
+    {
+      name: "Cold Med Cabinet",
+      after: [],
+      priority: () => true,
+      completed: () =>
+        getWorkshed() !== $item`cold medicine cabinet` ||
+        property.getNumber("_coldMedicineConsults") >= 5 ||
+        property.getNumber("_nextColdMedicineConsult") > totalTurnsPlayed(),
+      do: () => {
+        visitUrl("campground.php?action=workshed");
+        runChoice(5);
+      },
+      limit: { tries: 15 },
+      freeaction: true,
+    },
+    {
+      name: "Switch Cold Med to Train Set",
+      ready: () =>
+        !get("_workshedItemUsed") &&
+        getWorkshed() === $item`cold medicine cabinet` &&
+        get("_coldMedicineConsults") >= 5,
+      completed: () => get("_workshedItemUsed"),
+      do: () => use($item`Model Train Set`),
+      limit: { tries: 1 },
+      freeaction: true,
+    },
   ],
 };
 
@@ -393,7 +502,7 @@ export const KeysQuest: Quest = {
     {
       name: "Deck",
       after: [],
-      completed: () => get("_deckCardsDrawn") > 0,
+      completed: () => !have($item`Deck of Every Card`) || get("_deckCardsDrawn") > 0,
       do: () => cliExecute("cheat tower"),
       limit: { tries: 1 },
       freeaction: true,

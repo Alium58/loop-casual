@@ -1,5 +1,6 @@
 import {
   cliExecute,
+  myBasestat,
   myHp,
   myLevel,
   myMaxhp,
@@ -270,6 +271,9 @@ export const LevelingQuest: Quest = {
     {
       name: "Neverending Party",
       after: [],
+      prepare: (): void => {
+        cliExecute(`gain ${11 * myBasestat(myPrimestat())} ${myPrimestat()}`);
+      },
       acquire: [
         {
           item: $item`makeshift garbage shirt`,

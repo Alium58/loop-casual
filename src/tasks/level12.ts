@@ -21,6 +21,7 @@ import {
   $monster,
   $monsters,
   $skill,
+  AutumnAton,
   ensureEffect,
   get,
   have,

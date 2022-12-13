@@ -56,7 +56,8 @@ export function equipDefaults(outfit: Outfit): void {
 
   if (!outfit.modifier) {
     // Default outfit
-    outfit.equip($item`Fourth of May Cosplay Saber`);
+    outfit.equip($item`June cleaver`);
+    outfit.equip($item`designer sweatpants`);
     if (totalTurnsPlayed() >= get("nextParanormalActivity") && get("questPAGhost") === "unstarted")
       outfit.equip($item`protonic accelerator pack`);
     outfit.equip($item`vampyric cloake`);
@@ -69,7 +70,7 @@ export function equipDefaults(outfit: Outfit): void {
     outfit.equip($familiar`Temporal Riftlet`);
   } else if (have($item`gnomish housemaid's kgnee`)) {
     outfit.equip($familiar`Reagnimated Gnome`);
-  } else outfit.equip($familiar`Galloping Grill`);
+  } else outfit.equip($familiar`Grey Goose`);
 
   const commonFamiliarEquips = new Map<Familiar, Item>([
     [$familiar`Melodramedary`, $item`dromedary drinking helmet`],

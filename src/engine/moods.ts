@@ -1,6 +1,7 @@
 import {
   cliExecute,
   Effect,
+  getCampground,
   getWorkshed,
   myClass,
   myEffects,
@@ -32,20 +33,24 @@ function getRelevantEffects(): { [modifier: string]: Effect[] } {
     ML: $effects`Ur-Kel's Aria of Annoyance, Pride of the Puffin, Drescher's Annoying Noise`,
     item: $effects`Fat Leon's Phat Loot Lyric, Singer's Faithful Ocelot`,
     meat: $effects`Polka of Plenty`,
-    mainstat: $effects`Big, Tomato Power, Trivia Master, Gr8ness, Carol of the Hells, Carol of the Thrills`,
+    mainstat: $effects`Big, Tomato Power, Trivia Master, Gr8ness, Carol of the Thrills`, //, Carol of the Hells, Carol of the Thrills`,
     muscle: $effects`Go Get 'Em\, Tiger!, Phorcefullness, Incredibly Hulking`,
     mysticality: $effects`Glittering Eyelashes, Mystically Oiled, On the Shoulders of Giants`,
     moxie: $effects`Butt-Rock Hair, Superhuman Sarcasm, Cock of the Walk`,
   };
 
   // Class-specific
-  if (myClass() === $class`Seal Clubber`) result["init"].push($effect`Silent Hunting`);
-  else result["init"].push($effect`Nearly Silent Hunting`);
+  //if (myClass() === $class`Seal Clubber`) result["init"].push($effect`Silent Hunting`);
+  //else result["init"].push($effect`Nearly Silent Hunting`);
 
   // One-per-day
   if (!get("_ballpit")) result["mainstat"].push($effect`Having a Ball!`);
   if (!get("_lyleFavored")) result["mainstat"].push($effect`Favored by Lyle`);
-  if (!get("telescopeLookedHigh")) result["mainstat"].push($effect`Starry-Eyed`);
+  if (
+    !get("telescopeLookedHigh") &&
+    $item`Discount Telescope Warehouse gift certificate`.name in getCampground()
+  )
+    result["mainstat"].push($effect`Starry-Eyed`);
   if (get("spacegateAlways") && get("spacegateVaccine2") && !get("_spacegateVaccine"))
     result["mainstat"].push($effect`Broad-Spectrum Vaccine`);
   if (have($skill`Emotionally Chipped`) && get("_feelExcitementUsed") < 3)

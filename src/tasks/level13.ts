@@ -310,7 +310,7 @@ export const TowerQuest: Quest = {
       prepare: () => useSkill($skill`Cannelloni Cocoon`),
       completed: () => step("questL13Final") > 6,
       do: $location`Tower Level 1`,
-      effects: $effects`Spiky Shell, Jalapeño Saucesphere, Psalm of Pointiness, Scarysauce`,
+      effects: $effects`Spiky Shell, Jalapeño Saucesphere, Psalm of Pointiness`, //, Scarysauce`,
       outfit: { familiar: $familiar`Shorter-Order Cook`, equip: $items`bejeweled cufflinks` },
       boss: true,
       combat: new CombatStrategy().macro(new Macro().attack().repeat()),

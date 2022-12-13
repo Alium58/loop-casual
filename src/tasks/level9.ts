@@ -73,7 +73,7 @@ const ABoo: Task[] = [
       })
       .killHard(),
     choices: { 611: 1, 1430: 1 },
-    limit: { tries: 4 },
+    limit: { tries: 5 },
   },
   {
     name: "ABoo Horror",
