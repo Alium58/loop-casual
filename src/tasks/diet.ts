@@ -284,7 +284,7 @@ function menu(): MenuItem<MenuData>[] {
     new MenuItem(mallMin(perfectDrinks)),
 
     // SPLEEN
-    new MenuItem($item`octolus oculus`),
+    //new MenuItem($item`octolus oculus`),
     new MenuItem($item`prismatic wad`),
     new MenuItem($item`transdermal smoke patch`),
     new MenuItem($item`antimatter wad`),

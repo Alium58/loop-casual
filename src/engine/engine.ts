@@ -1,4 +1,4 @@
-import { cliExecute, Location, Monster, myAdventures } from "kolmafia";
+import { cliExecute, equippedItem, Location, Monster, myAdventures, print, Slot } from "kolmafia";
 import { Task } from "./task";
 import {
   $effect,
@@ -217,6 +217,9 @@ export class Engine extends BaseEngine<CombatActions, ActiveTask> {
     }
     fixFoldables(outfit);
     applyEffects(outfit.modifier ?? "");
+
+    const equipped = [...new Set(Slot.all().map((slot) => equippedItem(slot)))];
+    print(`Equipped: ${equipped.join(", ")}`);
 
     // HP/MP upkeep
     if (!task.freeaction) {

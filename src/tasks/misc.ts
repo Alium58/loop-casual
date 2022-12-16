@@ -327,49 +327,6 @@ export const MiscQuest: Quest = {
       limit: { tries: 10 },
     },
     {
-      name: "Autumn-aton",
-      after: [],
-      ready: () => have($item`Autumn-aton`),
-      completed: () => step("questL13Final") >= 0,
-      priority: () => true,
-      combat: new CombatStrategy().macro(
-        new Macro()
-        ).kill(),
-      do: () => {
-        //make sure all available upgrades are installed
-        AutumnAton.upgrade();
-        //get upgrades
-        if (!AutumnAton.currentUpgrades().includes("leftleg1")){
-          AutumnAton.sendTo($location`Noob Cave`);
-        } else if (!AutumnAton.currentUpgrades().includes("rightleg1") && 
-            AutumnAton.availableLocations().includes($location`The Haunted Kitchen`)){
-          AutumnAton.sendTo($location`The Haunted Kitchen`);
-        } else if (!AutumnAton.currentUpgrades().includes("leftarm1")){
-          AutumnAton.sendTo($location`The Haunted Pantry`);
-        } else if (!AutumnAton.currentUpgrades().includes("rightarm1") && 
-            AutumnAton.availableLocations().includes($location`Twin Peak`)){
-          AutumnAton.sendTo($location`Twin Peak`);
-        } 
-        //lighthouse
-        else if (AutumnAton.currentUpgrades().length >= 4 &&
-          step("questL12War") >= 1 &&
-          itemAmount($item`barrel of gunpowder`) < 5 &&
-          get("sidequestLighthouseCompleted") === "none"){
-          adv1($location`Sonofa Beach`);
-          AutumnAton.sendTo($location`Sonofa Beach`);
-        } 
-        //farming
-        else if (AutumnAton.availableLocations().includes($location`The Defiled Nook`)){
-          AutumnAton.sendTo($location`The Defiled Nook`);
-        } 
-        //If all else fails, grab an autumn leaf. This shouldn't ever happen
-        else {
-          AutumnAton.sendTo($location`The Sleazy Back Alley`);
-        }
-      },
-      limit: { tries: 15 },
-    },
-    {
       name: "Goose Exp",
       after: [],
       priority: () => true,
@@ -389,8 +346,7 @@ export const MiscQuest: Quest = {
       name: "Autumnaton",
       after: [],
       priority: () => true,
-      ready: () => AutumnAton.have(),
-      completed: () => step("questL13Final") >= 0,
+      completed: () => !have($item`autumn-aton`),
       do: () => {
         // Refresh upgrades
         AutumnAton.upgrade();
@@ -440,23 +396,31 @@ export const MiscQuest: Quest = {
 
         // Farming
         else if (farmingNookWithAutumnaton()) {
+          if (
+            !AutumnAton.availableLocations().includes($location`The Defiled Nook`) &&
+            canAdventure($location`The Defiled Nook`)
+          ) {
+            adv1($location`The Defiled Nook`);
+          }
           zones.push($location`The Defiled Nook`);
         }
 
         // Always send it somewhere
+        print(`autumnaton zone length = ${zones.length}`);
         if (zones.length < 1) {
           if (
             !AutumnAton.availableLocations().includes($location`The Toxic Teacups`) &&
             canAdventure($location`The Toxic Teacups`)
           ) {
             adv1($location`The Toxic Teacups`);
-            zones.push($location`The Toxic Teacups`);
-          } else zones.push($location`The Sleazy Back Alley`);
+          }
+          zones.push($location`The Toxic Teacups`, $location`The Sleazy Back Alley`);
         }
 
         const result = AutumnAton.sendTo(zones);
         if (result) print(`Autumnaton sent to ${result}`);
       },
+      combat: new CombatStrategy().macro(new Macro().attack()),
       limit: { tries: 15 },
       freeaction: true,
     },
