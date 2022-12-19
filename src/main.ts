@@ -11,7 +11,7 @@ import {
 } from "kolmafia";
 import { all_tasks, level_tasks, organ_tasks, quest_tasks } from "./tasks/all";
 import { prioritize } from "./route";
-import { Engine } from "./engine/engine";
+import { ProfitTrackingEngine } from "./engine/engine";
 import { convertMilliseconds, debug } from "./lib";
 import { $skill, get, have, set } from "libram";
 import { Task } from "./engine/task";
@@ -103,7 +103,7 @@ export function main(command?: string): void {
       break;
   }
 
-  const engine = new Engine(tasks);
+  const engine = new ProfitTrackingEngine(tasks, "loop_casual_profit_tracker");
 
   try {
     let actions_left = args.actions ?? Number.MAX_VALUE;
@@ -142,7 +142,7 @@ export function main(command?: string): void {
       }
     }
   } finally {
-    engine.propertyManager.resetAll();
+    engine.destruct();
   }
 
   print("Casual complete!", "purple");

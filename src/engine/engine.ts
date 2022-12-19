@@ -25,14 +25,17 @@ import {
 } from "./resources";
 import { equipDefaults, equipFirst, equipInitial, equipUntilCapped, fixFoldables } from "./outfit";
 import { flyersDone } from "../tasks/level12";
+import { printProfits, ProfitTracker } from "./profits";
 
 type ActiveTask = Task & {
   wanderer?: WandererSource;
 };
 
-export class Engine extends BaseEngine<CombatActions, ActiveTask> {
-  constructor(tasks: Task[]) {
+export class ProfitTrackingEngine extends BaseEngine<CombatActions, ActiveTask> {
+  profits: ProfitTracker;
+  constructor(tasks: Task[], key: string) {
     super(tasks, { combat_defaults: new MyActionDefaults() });
+    this.profits = new ProfitTracker(key);
   }
 
   public available(task: Task): boolean {
@@ -86,6 +89,11 @@ export class Engine extends BaseEngine<CombatActions, ActiveTask> {
     } else {
       debug(`${task.name} not completed!`, "blue");
     }
+  }
+  destruct(): void {
+    super.destruct();
+    this.profits.save();
+    printProfits(this.profits.all());
   }
 
   customize(
