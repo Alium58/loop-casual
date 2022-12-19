@@ -268,6 +268,7 @@ function menu(): MenuItem<MenuData>[] {
     new MenuItem($item`extra-greasy slider`),
     new MenuItem(mallMin(lasagnas)),
     new MenuItem(mallMin(smallEpics)),
+    new MenuItem($item`Calzone of Legend`),
 
     // BOOZE
     new MenuItem($item`astral pilsner`, { maximum: availableAmount($item`astral pilsner`) }),

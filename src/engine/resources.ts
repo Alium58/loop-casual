@@ -14,6 +14,7 @@ import {
   myTurncount,
   retrieveItem,
   Skill,
+  toInt,
   totalTurnsPlayed,
   use,
   weightAdjustment,
